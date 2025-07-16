@@ -29,4 +29,9 @@ export const APP_FEATURES = [
         title: "User-Friendly Interface",
         description: "Navigate through a clean and intuitive interface designed for an optimal user experience.",
     },
+    {
+        id: "07",
+        title: "Interview Preparation Checklist",
+        description: "Follow a comprehensive checklist to ensure you are fully prepared for your interviews.",
+    },
 ];
