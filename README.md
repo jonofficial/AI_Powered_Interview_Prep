@@ -1,4 +1,4 @@
-# 🧠 AI-Powered Interview Prep
+# 🧠 AI-Powered Interview Prep Website
 
 A smart and modern web application that helps you prepare for tech interviews with role-specific, AI-generated questions and answers. Dive deep into concepts, generate beginner-friendly explanations, and organize your sessions — all within a beautifully responsive interface powered by OpenAI.
 
