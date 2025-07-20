@@ -14,7 +14,7 @@ const SummaryCard = ({
 }) => {
   return (
     <div
-      className='w-[280px] bg-white border border-gray-300/40 rounded-xl p-2 overflow-hidden cursor-pointer hover:shadow-xl shadow-gray-100 relative group'
+      className='w-[400px] bg-white border border-gray-300/40 rounded-xl p-2 overflow-hidden cursor-pointer hover:shadow-xl shadow-gray-100 relative group'
       onClick={onSelect}
     >
       <div
