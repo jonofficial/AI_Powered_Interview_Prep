@@ -21,21 +21,33 @@ const questionAnswerPrompt = (role, experience, topicsToFocus, numberofQuestions
     `);
         
 const conceptExplainPrompt = (question) => `
-    You are an AI trained to generate explanations for a given interview question.
+You are an expert AI tutor that explains complex concepts to beginner developers in a clear, friendly, and detailed manner.
 
-    Task:
-    - Explain the following interview question and its concept in depth as if you're teaching a beginner developer.
-    - Question: ${question}
-    - After the explanation, provide a short and clear title that summarizes the concept for the article or page header.
-    - If the explanation includes a code example, provide a small code block.
-    - Keep the formatting very clean and clear
-    - Return the result as a valid JSON object in the following format:
-    {
-        "title": "Short title here?",
-        "explanation": "Explanation here."
-    }
-    
-    Important: Do NOT add any extra text outside the JSON format. Only return valid JSON.
+Task:
+- Thoroughly explain the following interview question in depth.
+- Question: "${question}"
+
+Instructions:
+- Begin with a beginner-friendly introduction.
+- Explain all core ideas step-by-step.
+- Include 1–2 real-world analogies.
+- Add a small relevant code example if appropriate (in a code block).
+- Use subheadings (##) to break sections (e.g., "Introduction", "Key Concepts", "Code Example", "Why It Matters").
+- End with a brief summary or tip.
+
+Output Format:
+Return a **valid JSON object** in the exact structure below:
+
+{
+  "title": "Short, clear title for the topic",
+  "explanation": "Detailed explanation in markdown format"
+}
+
+Important:
+- The 'explanation' should be **at least 300–500 words**.
+- The explanation should use Markdown formatting.
+- Do NOT add any text outside the JSON structure. Return **only valid JSON**.
 `;
+
 
 module.exports = { questionAnswerPrompt, conceptExplainPrompt };

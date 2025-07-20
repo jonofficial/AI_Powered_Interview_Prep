@@ -10,6 +10,9 @@ import RoleInfoHeader from './components/RoleInfoHeader';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import QuestionCard from '../../components/Cards/QuestionCard';
+import AIResponsePreview from './components/AIResponsePreview';
+import Drawer from '../../components/Drawer';
+import SkeletonLoader from '../../components/Loader/SkeletonLoader';
 
 function InterviewPrep() {
   const { sessionId } = useParams();
@@ -36,7 +39,32 @@ function InterviewPrep() {
     }
   };
 
-  const generateConceptExplanation = async (question) => {};
+  const generateConceptExplanation = async (question) => {
+    try{
+      setErrorMsg('');
+      setExplanation(null);
+
+      setIsLoading(true);
+      setOpenLeanMoreDrawer(true);
+
+      const response = await axiosInstance.post(
+        API_PATHS.AI.GENERATE_EXPLANATION,
+        { 
+          question, 
+        }
+      );
+
+      if (response.data) {
+        setExplanation(response.data);
+      }
+    } catch (error) {
+      setExplanation(null);
+      setErrorMsg("Failed to generate explanation. Please try again later.");
+      console.error("Error:",error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleQuestionPinStatus = async (questionId) => {
     try{
@@ -110,9 +138,9 @@ function InterviewPrep() {
        <QuestionCard
           question={data?.question}
           answer={data?.answer}
-          onLearnMore={() => {
-            generateConceptExplanation(data.question);
-          }}
+          onLearnMore={() => 
+            generateConceptExplanation(data.question)
+          }
           isPinned={data?.isPinned}
           onTogglePinStatus={() => toggleQuestionPinStatus(data._id)}
         />
@@ -123,6 +151,21 @@ function InterviewPrep() {
 </AnimatePresence>
           </div>
         </div>
+        <Drawer
+        isOpen={openLeanMoreDrawer}
+        onClose={() => setOpenLeanMoreDrawer(false)}
+        title={!isLoading && explanation?.title}
+        >
+          {errorMsg && (
+            <p className='flex gap-2 text-sm text-amber-600 font-medium'>
+              <LuCircleAlert className='' /> {errorMsg}
+            </p>
+            )}
+            {isLoading && <SkeletonLoader />}
+            {!isLoading && explanation && (
+              <AIResponsePreview content={explanation?.explanation} />
+            )}
+        </Drawer>
         </div>
     </DashboardLayout>
   )
