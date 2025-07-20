@@ -3,37 +3,41 @@ const Question = require('../models/Question');
 
 
 exports.createSession = async (req, res) => {
-    try{
-        const { role, experience, topicsToFocus, description } = req.body;
-        const userId = req.user._id;
+  try {
+    const { role, experience, topicsToFocus, description } = req.body;
+    const userId = req.user._id;
 
-        const session = new Session({
-            user: userId,
-            role,
-            experience,
-            topicsToFocus,
-            description,
+    const session = new Session({
+      user: userId,
+      role,
+      experience,
+      topicsToFocus,
+      description,
+    });
+
+    const questionDocs = await Promise.all(
+      req.body.questions.map(async (q) => {
+        const question = await Question.create({
+          session: session._id,
+          question: q.question,
+          answer: q.answer,
         });
-        
-        const questionDocs = await Promise.all(
-            req.body.questions.map(q => {
-                const question = new Question.create({
-                    session: session._id,
-                    question: q.question,
-                    answer: q.answer,
-                });
-                return question._id;
-            })
-        );
+        return question._id;
+      })
+    );
 
-        session.questions = questionDocs;
-        await session.save();
+    session.questions = questionDocs;
+    await session.save();
 
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error creating session', error: error.message });
-    }
+    res.status(201).json(session);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error creating session",
+      error: error.message,
+    });
+  }
 };
+
 
 exports.getMySessions = async (req, res) => {
     try{

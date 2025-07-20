@@ -5,7 +5,7 @@ import { validateEmail } from '../../utils/helper';
 import { API_PATHS } from '../../utils/apiPaths';
 import axiosInstance from '../../utils/axiosInstance';
 import { useContext } from 'react';
-import { UserContext } from '../../context/userContext';
+import { UserContext } from '../../context/UserContext';
 
 const Login = ({ setCurrentPage }) => {
   const [email, setEmail] = useState('');
