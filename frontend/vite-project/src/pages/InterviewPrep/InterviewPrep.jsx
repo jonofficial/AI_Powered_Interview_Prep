@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LuCircleAlert, LuListCollapse } from 'react-icons/lu';
+import { LuCircleAlert, LuList, LuListCollapse } from 'react-icons/lu';
 import SpinnerLoader from '../../components/Loader/SpinnerLoader';
 import { toast } from 'react-hot-toast';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
@@ -82,7 +82,47 @@ function InterviewPrep() {
     }
   };
 
-  const uploadMoreQuestions = async () => {};
+  const uploadMoreQuestions = async () => {
+  try {
+    setIsUpdatingLoader(true);
+
+    const aiResponse = await axiosInstance.post(
+      API_PATHS.AI.GENERATE_QUESTIONS,
+      {
+        role: sessionData?.role,
+        experience: sessionData?.experience,
+        topicsToFocus: sessionData?.topicsToFocus,
+        numberofQuestions: 10,
+      }
+    );
+
+    const generatedQuestions = aiResponse.data.questions; // 👈 FIX HERE
+
+    console.log("Sending to backend:", {
+      sessionId,
+      questions: generatedQuestions,
+    });
+
+    const response = await axiosInstance.post(
+      API_PATHS.QUESTION.ADD_TO_SESSION,
+      {
+        sessionId,
+        questions: generatedQuestions,
+      }
+    );
+
+    if (response.data) {
+      toast.success("Added more Q&A!");
+      fetchSessionDetailsById();
+    }
+  } catch (error) {
+    console.error("Upload Error:", error?.response?.data || error.message);
+    setError("Something went wrong. Please try again later.");
+  } finally {
+    setIsUpdatingLoader(false);
+  }
+};
+
 
   useEffect(() => {
     if (sessionId) {
@@ -144,7 +184,25 @@ function InterviewPrep() {
           isPinned={data?.isPinned}
           onTogglePinStatus={() => toggleQuestionPinStatus(data._id)}
         />
-        </>
+       
+        {!isLoading &&
+          sessionData?.questions?.length == index+1 && (
+            <div className='flex items-center justify-center mt-5'>
+              <button
+              className='flex items-center gap-3 text-sm text-white font-medium bg-black px-5 py-2 mr-2 rounded text-nowrap cursor-pointer'
+              disabled={isLoading || isUpdatingLoader}
+              onClick={uploadMoreQuestions}
+              >
+                {isUpdatingLoader ? (
+                  <SpinnerLoader />
+                ) : (
+                  <LuListCollapse className='text-lg' />
+                )}{' '}
+                Load More
+              </button>
+            </div>
+          )}
+          </>
         </motion.div>
     );
   })}

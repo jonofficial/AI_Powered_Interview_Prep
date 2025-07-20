@@ -24,7 +24,7 @@ export const API_PATHS = {
     },
 
     QUESTION: {
-        ADD_TO_SESSION: "api/questions/add",
+        ADD_TO_SESSION: "api/questions/add-to-session",
         PIN: (id) => `api/questions/toggle-pin/${id}`, 
         UPDATE_NOTE: (id) => `api/questions/${id}/note`,
     },
