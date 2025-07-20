@@ -82,3 +82,23 @@ cd vite-project
 npm install
 npm run dev
 ```
+Then open your browser and go to: http://localhost:5173
+
+## 🧪 Postman API Testing
+
+You can test APIs like:
+
+POST /api/sessions – Create a new session
+DELETE /api/sessions/:id – Delete session (pass JWT token in headers)
+POST /api/ai/generate-questions – Get Q&A using OpenAI
+POST /api/ai/concept-explanation – Get detailed concept explanation
+
+Include the Authorization header in the format:
+
+```bash
+Authorization: Bearer <your-jwt-token>
+```
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE)
