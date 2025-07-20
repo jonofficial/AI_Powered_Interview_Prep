@@ -4,6 +4,7 @@ import Input from '../../components/Inputs/Input';
 import SpinnerLoader from '../../components/Loader/SpinnerLoader';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
+import toast from 'react-hot-toast'; // ✅ import toast
 
 function CreateSessionForm({ onSuccess }) {
   const navigate = useNavigate(); 
@@ -24,49 +25,55 @@ function CreateSessionForm({ onSuccess }) {
     }));
   };
 
- const handleCreateSession = async (e) => {
-  e.preventDefault();
-  const { role, experience, topicsToFocus, description } = formData;
+  const handleCreateSession = async (e) => {
+    e.preventDefault();
+    const { role, experience, topicsToFocus, description } = formData;
 
-  if (!role || !experience || !topicsToFocus) {
-    setError('Missing required fields');
-    return;
-  }
+    if (!role || !experience || !topicsToFocus) {
+      setError('Missing required fields');
+      return;
+    }
 
-  try {
-    setIsLoading(true);
-    setError(null);
+    try {
+      setIsLoading(true);
+      setError(null);
 
-    // 1. Call AI API to generate questions
-    const aiResponse = await axiosInstance.post(API_PATHS.AI.GENERATE_QUESTIONS, {
-      role,
-      experience,
-      topicsToFocus,
-      numberofQuestions: 10, // You can let user input this too
-      description,
-    });
+      // 1. Call AI API to generate questions
+      const aiResponse = await axiosInstance.post(API_PATHS.AI.GENERATE_QUESTIONS, {
+        role,
+        experience,
+        topicsToFocus,
+        numberofQuestions: 10,
+        description,
+      });
 
-    const generatedQuestions = aiResponse.data.questions || [];
+      const generatedQuestions = aiResponse.data.questions || [];
 
-    // 2. Create session with generated questions
-    const sessionResponse = await axiosInstance.post(API_PATHS.SESSION.CREATE, {
-      role,
-      experience,
-      topicsToFocus,
-      description,
-      questions: generatedQuestions,
-    });
+      // 2. Create session with generated questions
+      const sessionResponse = await axiosInstance.post(API_PATHS.SESSION.CREATE, {
+        role,
+        experience,
+        topicsToFocus,
+        description,
+        questions: generatedQuestions,
+      });
 
-    console.log("Session Created:", sessionResponse.data);
-    navigate("/dashboard");
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong while creating the session.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      toast.success('Session created successfully ✅');
 
+      // 3. Optional callback to refetch session list
+      if (onSuccess) onSuccess();
+
+      // 4. Navigate to dashboard
+      navigate("/dashboard");
+
+    } catch (err) {
+      console.error(err);
+      toast.error('Something went wrong while creating the session ❌');
+      setError("Something went wrong while creating the session.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className='w-[90vw] md:w-[35vw] p-7 flex flex-col justify-center'>

@@ -78,7 +78,7 @@ exports.deleteSession = async (req, res) => {
         }
 
         // check if the logged-in user owns this session
-        if(session.user.toString() !== req.user._id) {
+        if(session.user.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Not authorized to delete this session' });
         }
 
