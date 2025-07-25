@@ -13,18 +13,25 @@ const questionRoutes = require("./routes/questionRoutes");
 const app = express();
 
 // Middlewares to handle CORS
-app.use(
-    cors({
-        origin: "http://localhost:5173", // Adjust this to your frontend URL
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-);
+// app.use(
+//     cors({
+//         origin: "http://localhost:5173", // Adjust this to your frontend URL
+//         methods: ["GET", "POST", "PUT", "DELETE"],
+//         allowedHeaders: ["Content-Type", "Authorization"],
+//     })
+// );
+app.use(cors());
 
 connectDB();
 
 // middlewares
 app.use(express.json());
+
+app.get("/",(req,res)=>{
+    return res.status(200).json({
+        message:`Server is running on port ${PORT}`
+    })
+})
 
 // routes
 app.use("/api/auth", authRoutes);
